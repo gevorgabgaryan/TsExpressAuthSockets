@@ -15,7 +15,6 @@ export class API {
       controllers: [AuthController],
       middlewares: [],
       routePrefix: '/api',
-
       validation: {
         whitelist: true,
         forbidNonWhitelisted: true,
