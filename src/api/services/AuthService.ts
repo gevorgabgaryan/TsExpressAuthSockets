@@ -42,7 +42,7 @@ export class AuthService {
 
       if (emailSent) {
         savedUser.isEmailSent = true;
-        await UserRepository.saveUser(savedUser);
+        await UserRepository.update({ id: savedUser.id }, { isEmailSent: true });
       }
 
       return savedUser;
