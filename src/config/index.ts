@@ -20,7 +20,10 @@ const config = {
   fromEmail: process.env.SEND_EMAIL || 'email',
   JWTSecret: process.env.JWT_SECRET || 'very_secret',
   JWTExpireIn: process.env.JWT_EXPIRE_IN,
-  JWTExpireInLong: process.env.JWT_EXPIRE_IN_LONG
+  JWTExpireInLong: process.env.JWT_EXPIRE_IN_LONG,
+  githubClientId: process.env.GITHUB_CLIENT_ID || 'github',
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET || 'github',
+  wsPort: process.env.WS_PORT? parseInt(process.env.WS_PORT, 10) : 1990,
 };
 
 export default config;

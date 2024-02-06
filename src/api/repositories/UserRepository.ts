@@ -18,14 +18,18 @@ export const UserRepository = appDataSource.getRepository(UserEntity).extend({
     return Mapper.map(userEntity, User);
   },
   async findByEmail(email: string): Promise<User | null> {
-    const userEntity =  await this.findOneBy({email});
-    return userEntity ? Mapper.map(userEntity , User) : null;
- },
- async findByResetPasswordToken(resetPasswordToken: string): Promise<User> {
-  const userEntity = await this.findOneBy({ resetPasswordToken });
-  if (!userEntity) {
-    throw new BadRequestError('invalid token');
-  }
-  return Mapper.map(userEntity, User);
-},
+    const userEntity = await this.findOneBy({ email });
+    return userEntity ? Mapper.map(userEntity, User) : null;
+  },
+  async findByResetPasswordToken(resetPasswordToken: string): Promise<User> {
+    const userEntity = await this.findOneBy({ resetPasswordToken });
+    if (!userEntity) {
+      throw new BadRequestError('invalid token');
+    }
+    return Mapper.map(userEntity, User);
+  },
+  async findById(id: string): Promise<User | null> {
+    const userEntity = await this.findOneBy({ id });
+    return userEntity ? Mapper.map(userEntity, User) : null;
+  },
 });

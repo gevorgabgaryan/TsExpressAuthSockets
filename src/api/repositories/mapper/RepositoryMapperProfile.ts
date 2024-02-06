@@ -1,5 +1,7 @@
 import { AutoMapper, ProfileBase, ignore } from '@nartc/automapper';
+import { AuthProvider } from '../../services/models/AuthProvider';
 import { User } from '../../services/models/User';
+import { AuthProviderEntity } from '../entities/AuthProviderEntity';
 import { UserEntity } from '../entities/UserEntitty';
 
 export class RepositoryMapperProfile extends ProfileBase {
@@ -12,5 +14,12 @@ export class RepositoryMapperProfile extends ProfileBase {
       .forMember((d) => d.id, ignore())
       .forMember((d) => d.createdAt, ignore())
       .forMember((d) => d.updatedAt, ignore());
-  }
+      mapper.createMap(AuthProviderEntity, AuthProvider);
+      mapper
+         .createMap(AuthProvider, AuthProviderEntity)
+         .forMember((d) => d.id, ignore())
+         .forMember((d) => d.createdAt, ignore())
+         .forMember((d) => d.updatedAt, ignore());
+     }
+
 }

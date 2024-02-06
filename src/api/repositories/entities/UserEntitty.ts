@@ -1,9 +1,11 @@
 import 'reflect-metadata';
-import { Entity, Column, Index, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { Entity, Column, Index, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { UserRole } from '../../enums/UserRole';
-import { UserStatus } from '../../enums/UserStatuses';
+
 import { AutoMap } from '@nartc/automapper';
+import { AuthProviderEntity } from './AuthProviderEntity';
+import { UserStatus } from '../../enums/UserStatuses';
 
 @Entity('users')
 export class UserEntity {
@@ -12,12 +14,12 @@ export class UserEntity {
   public id: string;
 
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   @Column({ name: 'first_name', type: 'varchar', length: 25 })
   public firstName: string;
 
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   @Column({ name: 'last_name', type: 'varchar', length: 25 })
   public lastName: string;
 
@@ -28,7 +30,8 @@ export class UserEntity {
   public email: string;
 
   @AutoMap()
-  @Column({ name: 'password_hash' })
+  @IsOptional()
+  @Column({ name: 'password_hash', nullable: true })
   public passwordHash: string;
 
   @AutoMap()
@@ -41,8 +44,8 @@ export class UserEntity {
   public status: string;
 
   @AutoMap()
-  @Column({ name: 'verification_token' })
-  @IsNotEmpty()
+  @IsOptional()
+  @Column({ name: 'verification_token', nullable: true })
   verificationToken: string;
 
   @AutoMap()
@@ -50,9 +53,11 @@ export class UserEntity {
   isEmailSent: boolean;
 
   @AutoMap()
-  @Column({ name: 'reset_password_token' })
-  @IsNotEmpty()
+  @Column({ name: 'reset_password_token', nullable: true })
   resetPasswordToken: string;
+
+  @OneToMany(() => AuthProviderEntity, (provider) => provider.user)
+  public authProviders: AuthProviderEntity[];
 
   @AutoMap()
   @CreateDateColumn({ name: 'created_at' })

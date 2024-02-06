@@ -10,7 +10,6 @@ import { AuthResponse } from './responses/auth/AuthResponse';
 import { ResetPasswordBody } from './requests/auth/ResetPasswordBody';
 import { NewPasswordBody } from './requests/auth/NewPasswordBody';
 
-
 @JsonController('/auth')
 @Service()
 export class AuthController {

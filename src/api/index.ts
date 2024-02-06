@@ -6,20 +6,31 @@ import { AuthController } from './controllers/AuthController';
 import { Container } from 'typedi';
 import { ControllerMapperProfile } from './controllers/mapper/ControllerMapperProfile';
 import { RepositoryMapperProfile } from './repositories/mapper/RepositoryMapperProfile';
+import authorizationChecker from './auth/authorizationChecker';
+import currentUserChecker from './auth/currentUserChecker';
+import { UserController } from './controllers/UserController';
+import SetupPassport from '../lib/passport';
+import { GithubController } from './controllers/GithubController';
 
 export class API {
   static async init() {
+    const passport = SetupPassport();
+
     useContainer(Container);
     const app = createExpressServer({
       cors: true,
-      controllers: [AuthController],
+      controllers: [AuthController, UserController, GithubController],
       middlewares: [],
       routePrefix: '/api',
       validation: {
         whitelist: true,
         forbidNonWhitelisted: true,
       },
+      authorizationChecker: authorizationChecker,
+      currentUserChecker: currentUserChecker,
     });
+
+    app.use(passport.initialize());
 
     API.initAutoMapper();
 
