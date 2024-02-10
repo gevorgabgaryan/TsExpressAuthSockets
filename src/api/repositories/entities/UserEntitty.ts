@@ -60,6 +60,10 @@ export class UserEntity {
   public authProviders: AuthProviderEntity[];
 
   @AutoMap()
+  @Column({ name: 'is_online', type: 'boolean', default: false })
+  isOnline: boolean;
+
+  @AutoMap()
   @CreateDateColumn({ name: 'created_at' })
   public createdAt: Date;
 

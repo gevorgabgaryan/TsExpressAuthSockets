@@ -11,8 +11,11 @@ import currentUserChecker from './auth/currentUserChecker';
 import { UserController } from './controllers/UserController';
 import SetupPassport from '../lib/passport';
 import { GithubController } from './controllers/GithubController';
+import http from 'http';
 
 export class API {
+  static server: http.Server;
+
   static async init() {
     const passport = SetupPassport();
 
@@ -34,9 +37,13 @@ export class API {
 
     API.initAutoMapper();
 
-    app.listen(config.port, () => {
-      console.log(`Server start http://localhost:${config.port}`);
+    API.server = http.createServer(app);
+
+    API.server.listen(config.port, () => {
+      console.log(`Server started at http://localhost:${config.port}`);
     });
+
+    return API.server;
   }
 
   static initAutoMapper() {
