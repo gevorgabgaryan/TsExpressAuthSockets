@@ -1,4 +1,4 @@
-import { Service } from 'typedi';
+import Container, { Service } from 'typedi';
 import { RegisterBody } from '../controllers/requests/auth/RegisterBody';
 import { User } from './models/User';
 import * as argon from 'argon2';
@@ -13,10 +13,16 @@ import { Auth } from './models/Auth';
 import config from '../../config';
 import { AuthProviderRepository } from '../repositories/AuthProviderRepository';
 import { AuthProvider } from './models/AuthProvider';
+import { UserService } from './UserService';
+import { WebSocketService } from '../../websocket';
+
+interface JWTPayload {
+  id: string;
+}
 
 @Service()
 export class AuthService {
-  constructor(private mailService: MailService) {}
+  constructor(private mailService: MailService, private userService: UserService) {}
 
   public async register(userData: RegisterBody): Promise<User> {
     try {
@@ -138,5 +144,29 @@ export class AuthService {
       console.error('Error in findOrCreateUser:', error);
       throw new Error('Error creating or finding user');
     }
+  }
+
+  public async checkToken(token: string, roles?: string[]): Promise<string> {
+    try {
+      const payload = jwt.verify(token, config.JWTSecret) as JWTPayload;
+      const user = await this.userService.getUser(payload.id);
+      if (!user) {
+        throw new BadRequestError('Invalid credentials');
+      }
+
+      if (roles && !roles.includes(user.role)) {
+        throw new BadRequestError('Access denied');
+      }
+
+      return user.id;
+    } catch (e) {
+      console.error(e);
+      throw new BadRequestError('Unexpected error');
+    }
+  }
+
+  public async logout(userId: string): Promise<void> {
+    const webSocketService = Container.get(WebSocketService);
+    webSocketService.notifyLogout(userId);
   }
 }

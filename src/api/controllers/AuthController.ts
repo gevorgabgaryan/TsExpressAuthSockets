@@ -1,4 +1,4 @@
-import { Body, JsonController, OnUndefined, Post } from 'routing-controllers';
+import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Post } from 'routing-controllers';
 import { RegisterBody } from './requests/auth/RegisterBody';
 import { Service } from 'typedi';
 import { AuthService } from '../services/AuthService';
@@ -9,6 +9,7 @@ import { LoginBody } from './requests/auth/LoginBody';
 import { AuthResponse } from './responses/auth/AuthResponse';
 import { ResetPasswordBody } from './requests/auth/ResetPasswordBody';
 import { NewPasswordBody } from './requests/auth/NewPasswordBody';
+import { User } from '../services/models/User';
 
 @JsonController('/auth')
 @Service()
@@ -41,4 +42,11 @@ export class AuthController {
   public async newPassword(@Body({ required: true }) body: NewPasswordBody): Promise<void> {
     return this.authService.newPassword(body.token, body.password);
   }
+
+  @OnUndefined(204)
+  @Get('/logout')
+  @Authorized()
+  public async logout(@CurrentUser() user: User): Promise<void> {
+    await this.authService.logout(user.id);
+}
 }
