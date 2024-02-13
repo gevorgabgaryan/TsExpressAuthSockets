@@ -32,13 +32,13 @@ class SocketIO {
         if (token) {
           const authService = Container.get<AuthService>(AuthService);
           const userId = await authService.checkToken(token, ['user']);
-          if (userId) {
+
             if (userId) {
                 (socket as AuthenticatedSocket).userId = userId;
                 return next();
             }
             return next();
-          }
+
         }
         throw new Error('Auth token required');
       } catch (e) {
@@ -48,7 +48,7 @@ class SocketIO {
     userNamespace.on('connection', (socket: Socket) => {
         console.info(`new socket: ${socket.id}`);
         const authenticatedSocket = socket as AuthenticatedSocket;
-        console.info(`socket: ${authenticatedSocket.userId}`);
+        console.info(`userId socket: ${authenticatedSocket.userId}`);
         userNamespaceHandler(io, authenticatedSocket, userNamespace);
     });
     console.log('Socket init')
