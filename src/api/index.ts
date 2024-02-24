@@ -12,6 +12,9 @@ import { UserController } from './controllers/UserController';
 import SetupPassport from '../lib/passport';
 import { GithubController } from './controllers/GithubController';
 import http from 'http';
+import express from 'express';
+import logger from '../lib/logger';
+import { RequestLogMiddleware } from './middlewares/RequestLogMiddleware';
 
 export class API {
   static server: http.Server;
@@ -23,7 +26,7 @@ export class API {
     const app = createExpressServer({
       cors: true,
       controllers: [AuthController, UserController, GithubController],
-      middlewares: [],
+      middlewares: [RequestLogMiddleware],
       routePrefix: '/api',
       validation: {
         whitelist: true,
@@ -35,12 +38,14 @@ export class API {
 
     app.use(passport.initialize());
 
+    app.use(express.static('public'));
+
     API.initAutoMapper();
 
     API.server = http.createServer(app);
 
     API.server.listen(config.port, () => {
-      console.log(`Server started at http://localhost:${config.port}`);
+      logger.info(`Server started at http://localhost:${config.port}`);
     });
 
     return API.server;

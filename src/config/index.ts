@@ -1,4 +1,5 @@
 import { config as dotenvConfig } from 'dotenv';
+import path from 'path'
 
 dotenvConfig();
 
@@ -24,6 +25,9 @@ const config = {
   githubClientId: process.env.GITHUB_CLIENT_ID || 'github',
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET || 'github',
   wsPort: process.env.WS_PORT? parseInt(process.env.WS_PORT, 10) : 1990,
+  userPhotosDir: path.join(__dirname, '../../public/users'),
+  nodeEnv: process.env.NODE_ENV || 'development',
+  logOutput: process.env.LOG_OUTPUT || 'combined',
 };
 
 export default config;

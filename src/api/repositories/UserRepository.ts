@@ -2,7 +2,7 @@ import { Mapper } from '@nartc/automapper';
 import { BadRequestError } from 'routing-controllers';
 import appDataSource from '../../db/appDataSource';
 import { User } from '../services/models/User';
-import { UserEntity } from './entities/UserEntitty';
+import { UserEntity } from './entities/UserEntity';
 
 export const UserRepository = appDataSource.getRepository(UserEntity).extend({
   async saveUser(user: User): Promise<User> {

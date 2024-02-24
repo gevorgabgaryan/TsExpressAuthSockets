@@ -10,16 +10,10 @@ import {
 } from 'typeorm';
 import { AutoMap } from '@nartc/automapper';
 import { IsNotEmpty } from 'class-validator';
-import { UserEntity } from './UserEntitty';
-
-
-
+import { UserEntity } from './UserEntity';
+import { BaseEntity } from './BaseEntity';
 @Entity('auth_provider')
-export class AuthProviderEntity {
-  @AutoMap()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class AuthProviderEntity extends BaseEntity {
   @AutoMap()
   @IsNotEmpty()
   @Column('uuid', { name: 'user_id' })
@@ -38,12 +32,4 @@ export class AuthProviderEntity {
   @ManyToOne(() => UserEntity, (user) => user.authProviders)
   @JoinColumn({ name: 'user_id' })
   public user: UserEntity;
-
-  @AutoMap()
-  @CreateDateColumn({ name: 'created_at' })
-  public createdAt: Date;
-
-  @AutoMap()
-  @UpdateDateColumn({ name: 'updated_at' })
-  public updatedAt: Date;
 }

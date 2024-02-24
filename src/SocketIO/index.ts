@@ -5,6 +5,7 @@ import { AuthService } from '../api/services/AuthService';
 import { AuthenticatedSocket } from './interface/AuthenticatedSocket';
 import Container from 'typedi';
 import userNamespaceHandler from './userNameSpaceHandler';
+import logger from '../lib/logger';
 
 class SocketIO {
   static async init(httpServer: HttpServer): Promise<void> {
@@ -51,7 +52,7 @@ class SocketIO {
         console.info(`userId socket: ${authenticatedSocket.userId}`);
         userNamespaceHandler(io, authenticatedSocket, userNamespace);
     });
-    console.log('Socket init')
+    logger.info('Socket init')
   }
 }
 

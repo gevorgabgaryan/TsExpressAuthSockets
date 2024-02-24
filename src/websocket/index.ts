@@ -3,6 +3,7 @@ import { Service } from 'typedi';
 import config from '../config'; // Ensure this path is correct
 import { UserManager } from './UserManager'; // Ensure this path is correct and the class name matches the file name
 import { RequestsManager } from './RequestsManager';
+import logger from '../lib/logger';
 
 @Service()
 export class WebSocketService {
@@ -17,7 +18,7 @@ export class WebSocketService {
 
         setInterval(() => this.userManager.sendRates(), 10000);
 
-        console.log(`WebSocket server is running on port ${config.wsPort}`);
+        logger.info(`WebSocket server is running on port ${config.wsPort}`);
     }
 
     private onSocketConnection = (socket: WebSocket): void => {

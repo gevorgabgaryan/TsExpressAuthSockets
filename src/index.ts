@@ -1,6 +1,7 @@
 import Container from 'typedi';
 import { API } from './api';
 import { TypeORM } from './db';
+import logger from './lib/logger';
 import SocketIO from './SocketIO';
 import { WebSocketService } from './websocket';
 
@@ -12,6 +13,6 @@ import { WebSocketService } from './websocket';
     await webSocketService.init();
     await SocketIO.init(httpServer);
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 })();
