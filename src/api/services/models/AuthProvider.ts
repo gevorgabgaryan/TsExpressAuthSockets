@@ -1,7 +1,6 @@
 import { AutoMap } from '@nartc/automapper';
 import { Provider } from '../../enums/Provider';
 
-
 export class AuthProvider {
   @AutoMap()
   public id: string;

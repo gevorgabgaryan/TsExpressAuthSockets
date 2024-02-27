@@ -3,7 +3,6 @@ import { BaseModel } from './BaseModel';
 import { Photo } from './Photo';
 
 export class User extends BaseModel {
-
   @AutoMap()
   public firstName: string;
 
@@ -34,9 +33,8 @@ export class User extends BaseModel {
   @AutoMap()
   isOnline: boolean;
 
-  @AutoMap()
-  photos: Photo[]
-
+  @AutoMap(() => Photo)
+  photos: Photo[];
 
   public get fullName(): string {
     return `${this.firstName} ${this.lastName}`;

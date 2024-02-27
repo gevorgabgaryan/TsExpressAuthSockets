@@ -46,4 +46,8 @@ export const UserRepository = appDataSource.getRepository(UserEntity).extend({
     return Mapper.map(updatedUser, User);
   },
 
+  async findByIdWithPhotos(id: string): Promise<User | null> {
+    const userEntity = await this.findOne({ where: { id }, relations: ['photos'] });
+    return userEntity ? Mapper.map(userEntity, User) : null;
+  },
 });

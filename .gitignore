@@ -2,3 +2,5 @@ node_modules/
 resources
 .env
 logs
+public
+public/users

@@ -10,7 +10,7 @@ import { BaseEntity } from './BaseEntity';
 import { PhotoEntity } from './PhotoEntity';
 
 @Entity('users')
-export class UserEntity  extends BaseEntity {
+export class UserEntity extends BaseEntity {
   @AutoMap()
   @IsOptional()
   @Column({ name: 'first_name', type: 'varchar', length: 25 })

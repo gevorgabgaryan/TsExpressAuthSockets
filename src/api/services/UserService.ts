@@ -1,15 +1,16 @@
 import Jimp from 'jimp';
 import { Service } from 'typedi';
+import config from '../../config';
 import { UserRepository } from '../repositories/UserRepository';
 import { BaseService } from './BaseService';
 import { User } from './models/User';
 import { PhotoService } from './PhotoService';
+import path from 'path';
 
 @Service()
 export class UserService extends BaseService {
-
   constructor(private photoService: PhotoService) {
-    super()
+    super();
   }
   public getUser(userId: string): Promise<User | null> {
     return UserRepository.findById(userId);
@@ -26,35 +27,38 @@ export class UserService extends BaseService {
   public async uploadPhoto(user: User, file: Express.Multer.File): Promise<void> {
     try {
       return await this.transaction(async (unitOfWork) => {
-        const savedPhoto = await this.photoService.savePhoto(file, user, unitOfWork);
-
-        const sizes = [
-          { suffix: '_icon', width: 100, height: 100 },
-          { suffix: '_normal', width: 300, height: 300 },
-          { suffix: '_large', width: 500, height: 500 },
-        ];
-
-       for (const size of sizes) {
-          const resizedFilePath = await this.resizeAndSave(file.path, size.width, size.height, size.suffix);
-        }
-
+        const savedPhoto = await this.photoService.savePhoto(file.filename, user, unitOfWork);
         if (!user.photos) {
           user.photos = [];
         }
         user.photos.push(savedPhoto);
+
+        const sizes = config.photoResizeSizes;
+
+        for (const size of sizes) {
+          const fileNameWithoutExtension = path.basename(file.filename, path.extname(file.filename));
+          const reSizedImageName = `${fileNameWithoutExtension}_${size.suffix}${path.extname(file.filename)}`;
+          await this.resizeImage(file.path, reSizedImageName, size.width, size.height);
+          const savedPhoto = await this.photoService.savePhoto(reSizedImageName, user, unitOfWork);
+          user.photos.push(savedPhoto);
+        }
         await unitOfWork.userRepository.save(user);
       });
-    } catch (error: any) {
-        throw error;
+    } catch (error) {
+      throw error;
     }
   }
 
-  private async resizeAndSave(filePath: string, width: number, height: number, suffix: string): Promise<string> {
+  private async resizeImage(filePath: string, fileName: string, width: number, height: number): Promise<string> {
     const image = await Jimp.read(filePath);
     image.resize(width, height);
-    const outputPath = filePath.replace(/(\.[\w\d_-]+)$/i, `${suffix}$1`);
+    const directory = path.dirname(filePath);
+    const outputPath = path.join(directory, fileName);
     await image.writeAsync(outputPath);
     return outputPath;
   }
 
+  public getUserWithPhotos(userId: string): Promise<User | null> {
+    return UserRepository.findByIdWithPhotos(userId);
+  }
 }

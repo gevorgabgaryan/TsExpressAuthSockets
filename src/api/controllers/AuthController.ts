@@ -48,5 +48,5 @@ export class AuthController {
   @Authorized()
   public async logout(@CurrentUser() user: User): Promise<void> {
     await this.authService.logout(user.id);
-}
+  }
 }

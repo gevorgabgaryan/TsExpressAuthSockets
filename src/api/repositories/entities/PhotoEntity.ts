@@ -4,7 +4,7 @@ import { BaseEntity } from './BaseEntity';
 import { AutoMap } from '@nartc/automapper';
 import { UserEntity } from './UserEntity';
 
-@Entity()
+@Entity('photos')
 export class PhotoEntity extends BaseEntity {
   @AutoMap()
   @Column({ default: 'Avatar' })
@@ -12,6 +12,7 @@ export class PhotoEntity extends BaseEntity {
   name: string;
 
   @AutoMap()
+  @Column()
   @IsUrl()
   url: string;
 

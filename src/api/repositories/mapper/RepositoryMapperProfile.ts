@@ -17,22 +17,20 @@ export class RepositoryMapperProfile extends ProfileBase {
       .forMember((d) => d.id, ignore())
       .forMember((d) => d.createdAt, ignore())
       .forMember((d) => d.updatedAt, ignore());
-      mapper.createMap(AuthProviderEntity, AuthProvider);
-      mapper
-         .createMap(AuthProvider, AuthProviderEntity)
-         .forMember((d) => d.id, ignore())
-         .forMember((d) => d.createdAt, ignore())
-         .forMember((d) => d.updatedAt, ignore());
-         mapper
-         .createMap(Photo, PhotoEntity, {
-           includeBase: [BaseModel, BaseEntity],
-         })
-       mapper
-         .createMap(PhotoEntity, Photo, {
-           includeBase: [BaseEntity, BaseModel],
-         })
-         .forMember((d) => d.createdAt, ignore())
-         .forMember((d) => d.updatedAt, ignore());
-     }
-
+    mapper.createMap(AuthProviderEntity, AuthProvider);
+    mapper
+      .createMap(AuthProvider, AuthProviderEntity)
+      .forMember((d) => d.id, ignore())
+      .forMember((d) => d.createdAt, ignore())
+      .forMember((d) => d.updatedAt, ignore());
+    mapper.createMap(Photo, PhotoEntity, {
+      includeBase: [BaseModel, BaseEntity],
+    });
+    mapper
+      .createMap(PhotoEntity, Photo, {
+        includeBase: [BaseEntity, BaseModel],
+      })
+      .forMember((d) => d.createdAt, ignore())
+      .forMember((d) => d.updatedAt, ignore());
+  }
 }

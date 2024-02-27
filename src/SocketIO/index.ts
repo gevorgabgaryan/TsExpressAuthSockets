@@ -1,4 +1,4 @@
-import { Server, Socket  } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { pingHandler } from './eventHandler';
 import { AuthService } from '../api/services/AuthService';
@@ -10,20 +10,20 @@ import logger from '../lib/logger';
 class SocketIO {
   static async init(httpServer: HttpServer): Promise<void> {
     const io = new Server(httpServer, {
-        cors: {
-          origin: "*",
-          methods: ["GET", "POST"],
-          credentials: true
-        }
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
     });
-    io.on('connection', (socket: Socket ) => {
+    io.on('connection', (socket: Socket) => {
       socket.on('chat message', (msg) => {
-            console.log('message: ' + msg);
-            socket.emit('message', 'hello world')
+        console.log('message: ' + msg);
+        socket.emit('message', 'hello world');
       });
       console.log('A client connected');
 
-      socket.on('ping', (callback) => pingHandler(socket, callback))
+      socket.on('ping', (callback) => pingHandler(socket, callback));
     });
 
     const userNamespace = io.of('/users');
@@ -34,12 +34,11 @@ class SocketIO {
           const authService = Container.get<AuthService>(AuthService);
           const userId = await authService.checkToken(token, ['user']);
 
-            if (userId) {
-                (socket as AuthenticatedSocket).userId = userId;
-                return next();
-            }
+          if (userId) {
+            (socket as AuthenticatedSocket).userId = userId;
             return next();
-
+          }
+          return next();
         }
         throw new Error('Auth token required');
       } catch (e) {
@@ -47,12 +46,12 @@ class SocketIO {
       }
     });
     userNamespace.on('connection', (socket: Socket) => {
-        console.info(`new socket: ${socket.id}`);
-        const authenticatedSocket = socket as AuthenticatedSocket;
-        console.info(`userId socket: ${authenticatedSocket.userId}`);
-        userNamespaceHandler(io, authenticatedSocket, userNamespace);
+      console.info(`new socket: ${socket.id}`);
+      const authenticatedSocket = socket as AuthenticatedSocket;
+      console.info(`userId socket: ${authenticatedSocket.userId}`);
+      userNamespaceHandler(io, authenticatedSocket, userNamespace);
     });
-    logger.info('Socket init')
+    logger.info('Socket init');
   }
 }
 

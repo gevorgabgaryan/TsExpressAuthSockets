@@ -1,23 +1,24 @@
-
-import { Socket  } from 'socket.io';
+import { Socket } from 'socket.io';
 import Container from 'typedi';
 import { UserService } from '../api/services/UserService';
 import { AuthenticatedSocket } from './interface/AuthenticatedSocket';
 
-
 type CallbackFunction = (response: { status: string }) => void;
 export const pingHandler = (socket: Socket, callback: CallbackFunction): void => {
-    if (typeof callback === 'function') {
-      callback({
-        status: 'pong',
-      });
-    }
+  if (typeof callback === 'function') {
+    callback({
+      status: 'pong',
+    });
+  }
 };
-
 
 type Callback = (response: Record<string, any>) => void;
 
-export const onlineHandler = async (socket: AuthenticatedSocket, callback: Callback, namespace: typeof Socket.prototype.nsp): Promise<void> => {
+export const onlineHandler = async (
+  socket: AuthenticatedSocket,
+  callback: Callback,
+  namespace: typeof Socket.prototype.nsp,
+): Promise<void> => {
   try {
     const userService = Container.get<UserService>(UserService);
     const user = await userService.makeUserOnline(socket.userId);
@@ -33,7 +34,10 @@ export const onlineHandler = async (socket: AuthenticatedSocket, callback: Callb
   }
 };
 
-export const offlineHandler = async (socket: AuthenticatedSocket, namespace: typeof Socket.prototype.nsp): Promise<void> => {
+export const offlineHandler = async (
+  socket: AuthenticatedSocket,
+  namespace: typeof Socket.prototype.nsp,
+): Promise<void> => {
   try {
     const userService = Container.get<UserService>(UserService);
     const user = await userService.makeUserOffline(socket.userId as string);
@@ -43,7 +47,12 @@ export const offlineHandler = async (socket: AuthenticatedSocket, namespace: typ
   }
 };
 
-export const privateMessageHandler = async (namespace: typeof Socket.prototype.nsp, userId: string, message: string, callback: Callback): Promise<void> => {
+export const privateMessageHandler = async (
+  namespace: typeof Socket.prototype.nsp,
+  userId: string,
+  message: string,
+  callback: Callback,
+): Promise<void> => {
   try {
     const room = namespace.adapter.rooms.get(userId);
     if (!room || room.size === 0) {

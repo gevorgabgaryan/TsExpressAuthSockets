@@ -3,8 +3,6 @@ import { EntityManager } from 'typeorm';
 import appDataSource from '../../../db/appDataSource';
 import { UnitOfWork } from '../../repositories/UnitOfWork/UnitOfWork';
 
-
-
 @Service()
 export abstract class BaseTransactionable {
   protected async transaction<T>(runInTransaction: (unitOfWork: UnitOfWork) => Promise<T>): Promise<T> {

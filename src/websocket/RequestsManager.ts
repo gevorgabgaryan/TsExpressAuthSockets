@@ -15,42 +15,46 @@ export class RequestsManager {
   constructor(
     private authService: AuthService = Container.get(AuthService),
     private wsValidator: WsValidator = Container.get(WsValidator),
-    private userManager: UserManager = Container.get(UserManager)
+    private userManager: UserManager = Container.get(UserManager),
   ) {
     this.initCalls();
   }
 
   initCalls() {
-    this.registerCall('authorize', AuthorizeRequest, ['user'], async (socket: AuthenticatedWebSocket, params: any, roles: string[]) => {
-      try {
-        const tokenRequest = new AuthorizeRequest();
-        tokenRequest.token = params.token;
-        const validationErrors = await this.wsValidator.validate(tokenRequest);
-        if (validationErrors.length > 0) {
-          throw new BadRequestError('Validation failed');
+    this.registerCall(
+      'authorize',
+      AuthorizeRequest,
+      ['user'],
+      async (socket: AuthenticatedWebSocket, params: any, roles: string[]) => {
+        try {
+          const tokenRequest = new AuthorizeRequest();
+          tokenRequest.token = params.token;
+          const validationErrors = await this.wsValidator.validate(tokenRequest);
+          if (validationErrors.length > 0) {
+            throw new BadRequestError('Validation failed');
+          }
+
+          const userId = await this.authService.checkToken(params.token, roles);
+
+          this.userManager.addAuthorized(userId, socket);
+          socket.userId = userId;
+          this.send(socket, { message: 'Successfully authorized' });
+        } catch (e) {
+          console.error(e);
+          this.send(socket, { error: true, message: 'Unauthorized' });
         }
-
-        const  userId = await this.authService.checkToken(params.token, roles);
-
-        this.userManager.addAuthorized(userId, socket);
-        socket.userId = userId;
-        this.send(socket, { message: 'Successfully authorized' });
-      } catch (e) {
-        console.error(e);
-        this.send(socket, { error: true, message: 'Unauthorized' });
-      }
-    });
+      },
+    );
 
     this.registerCall('subscribeRates', null, ['user'], async (socket: AuthenticatedWebSocket, params: any) => {
-        this.userManager.subscribeToRates(socket);
-        this.send(socket, { message: 'Subscribed to rate updates' });
+      this.userManager.subscribeToRates(socket);
+      this.send(socket, { message: 'Subscribed to rate updates' });
     });
 
     this.registerCall('unsubscribeRates', null, ['user'], async (socket: AuthenticatedWebSocket, params: any) => {
-        this.userManager.unsubscribeFromRates(socket);
-        this.send(socket, { message: 'Unsubscribed from rate updates' });
+      this.userManager.unsubscribeFromRates(socket);
+      this.send(socket, { message: 'Unsubscribed from rate updates' });
     });
-
   }
 
   registerCall(callName: string, schema: Function | null, roles: string[] | null, callback: Function) {

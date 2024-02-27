@@ -5,6 +5,7 @@ import { User } from './models/User';
 import { BaseService } from './BaseService';
 import * as fs from 'fs/promises';
 import { UnitOfWork } from '../repositories/UnitOfWork/UnitOfWork';
+import config from '../../config';
 
 @Service()
 export class PhotoService extends BaseService {
@@ -12,14 +13,15 @@ export class PhotoService extends BaseService {
     super();
   }
 
-  public async savePhoto(file: Express.Multer.File, user: User, unitOfWork: UnitOfWork): Promise<Photo> {
-      const photo = new Photo();
-      this.addIdAndTimestamps(photo);
-      photo.name = file.filename;
-      photo.url = file.path;
-      photo.user = user;
-      const savedPhoto = await unitOfWork.photoRepository.savePhoto(photo);
-      return savedPhoto;
+  public async savePhoto(fileName: string, user: User, unitOfWork: UnitOfWork): Promise<Photo> {
+    const relativePath = `${config.userPhotosDir}/${fileName}`;
+    const photo = new Photo();
+    this.addIdAndTimestamps(photo);
+    photo.name = fileName;
+    photo.url = relativePath;
+    photo.user = user;
+    const savedPhoto = await unitOfWork.photoRepository.savePhoto(photo);
+    return savedPhoto;
   }
 
   public async ensureDirExists(dirPath: string) {
@@ -33,5 +35,4 @@ export class PhotoService extends BaseService {
       }
     }
   }
-
 }

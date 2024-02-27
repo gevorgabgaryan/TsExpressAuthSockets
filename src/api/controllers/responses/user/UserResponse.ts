@@ -1,4 +1,5 @@
 import { AutoMap } from '@nartc/automapper';
+import { PhotoResponse } from './PhotoResponse';
 
 export class UserResponse {
   @AutoMap()
@@ -21,4 +22,7 @@ export class UserResponse {
 
   @AutoMap()
   public role: string;
+
+  @AutoMap(() => PhotoResponse)
+  public photos: PhotoResponse[];
 }
