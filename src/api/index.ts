@@ -15,6 +15,8 @@ import http from 'http';
 import express from 'express';
 import logger from '../lib/logger';
 import { RequestLogMiddleware } from './middlewares/RequestLogMiddleware';
+import { SecurityMiddleware } from './middlewares/SecurityMiddleware';
+import { RateLimitingMiddleware } from './middlewares/RateLimitingMiddleware';
 
 export class API {
   static server: http.Server;
@@ -26,7 +28,7 @@ export class API {
     const app = createExpressServer({
       cors: true,
       controllers: [AuthController, UserController, GithubController],
-      middlewares: [RequestLogMiddleware],
+      middlewares: [RequestLogMiddleware, SecurityMiddleware, RateLimitingMiddleware],
       routePrefix: '/api',
       validation: {
         whitelist: true,

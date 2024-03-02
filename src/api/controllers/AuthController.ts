@@ -1,4 +1,4 @@
-import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Post } from 'routing-controllers';
+import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Post, UseBefore } from 'routing-controllers';
 import { RegisterBody } from './requests/auth/RegisterBody';
 import { Service } from 'typedi';
 import { AuthService } from '../services/AuthService';
@@ -10,11 +10,14 @@ import { AuthResponse } from './responses/auth/AuthResponse';
 import { ResetPasswordBody } from './requests/auth/ResetPasswordBody';
 import { NewPasswordBody } from './requests/auth/NewPasswordBody';
 import { User } from '../services/models/User';
+import { AuthRateLimitingMiddleware } from '../middlewares/AuthRateLimitingMiddleware';
 
 @JsonController('/auth')
 @Service()
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @UseBefore(AuthRateLimitingMiddleware)
   @Post('/register')
   async register(@Body() body: RegisterBody) {
     const newUser = await this.authService.register(body);
@@ -27,6 +30,7 @@ export class AuthController {
     return this.authService.confirmEmail(body.token);
   }
 
+  @UseBefore(AuthRateLimitingMiddleware)
   @Post('/login')
   public async login(@Body({ required: true }) body: LoginBody): Promise<AuthResponse> {
     const auth = await this.authService.login(body);
