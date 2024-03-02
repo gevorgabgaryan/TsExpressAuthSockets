@@ -33,12 +33,12 @@ export class UserEntity extends BaseEntity {
   public passwordHash: string;
 
   @AutoMap()
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Column({ type: 'varchar', default: UserRole.USER })
   role: string;
 
   @AutoMap()
   @IsNotEmpty()
-  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.NEW })
+  @Column({ type: 'varchar', default: UserStatus.NEW })
   public status: string;
 
   @AutoMap()

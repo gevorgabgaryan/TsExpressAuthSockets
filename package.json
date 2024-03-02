@@ -14,7 +14,11 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js ",
     "typeorm:generate-migration": "npm run typeorm -- migration:generate src/db/migrations/$npm_config_name -d src/db/appDataSource.ts",
     "typeorm:run-migrations": "npm run typeorm -- migration:run -d src/db/appDataSource",
-    "test": "jest"
+    "test": "jest --runInBand",
+    "test:unit": "npm run test -- --testPathPattern=unit",
+    "test:integration": "npm run test -- --testPathPattern=integration",
+    "test:e2e": "npm run test -- --testPathPattern=e2e",
+    "test:coverage": "jest --coverage --runInBand --testPathPattern=unit"
   },
   "repository": {
     "type": "git",
@@ -46,6 +50,7 @@
     "reflect-metadata": "^0.2.1",
     "routing-controllers": "^0.10.4",
     "socket.io": "^4.7.4",
+    "sqlite3": "^5.1.7",
     "typedi": "^0.10.0",
     "typeorm": "^0.3.20",
     "typescript": "^5.3.3",

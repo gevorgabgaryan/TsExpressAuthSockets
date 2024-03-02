@@ -58,19 +58,34 @@ describe('AuthService', () => {
       expect(udpateSpy).toHaveBeenCalled();
       expect(result).toEqual(expectedUser);
     });
-    it('should throw an ExistsError when adding a user with an existing email', async () => {
+    it('should throw an error', async () => {
       const userData = {
         firstName: 'John',
         lastName: 'Doe',
-        email: 'existing.email@example.com',
+        email: 'ex',
         password: 'password123',
         files: [],
       };
 
       jest.spyOn(unitOfWork.userRepository, 'saveUser').mockRejectedValueOnce(new Error('User exists'));
-
       await expect(authService.register(userData)).rejects.toThrow('User exists');
     });
+
+    it('should throw a "User exist" error when adding a user with an existing email', async () => {
+      const userData = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'existing.email@example.com',
+        password: 'password123'
+      };
+
+      const dbError: Error & { code?: string } = new Error('User exists');
+      dbError.code = '23505';
+
+      jest.spyOn(unitOfWork.userRepository, 'saveUser').mockRejectedValueOnce(dbError);
+      await expect(authService.register(userData)).rejects.toThrow('User exist');
+    });
+
 
   });
 

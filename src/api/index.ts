@@ -51,6 +51,14 @@ export class API {
     return API.server;
   }
 
+  static async close() {
+    if (API.server) {
+      API.server.close(() => {
+        logger.info('Server closed.')
+      });
+    }
+ }
+
   static initAutoMapper() {
     Mapper.withGlobalSettings({
       skipUnmappedAssertion: true,
