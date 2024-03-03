@@ -3,4 +3,5 @@ resources
 .env
 logs
 public
-public/users
+public/user
+coverage

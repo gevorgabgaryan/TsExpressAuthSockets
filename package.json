@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/gevorgabgaryan/Express-Auth-app#readme",
   "dependencies": {
-    "@nartc/automapper": "^1.1.4",
+    "@nartc/automapper": "^7.0.4",
     "@sendgrid/mail": "^8.1.0",
     "argon2": "^0.31.2",
     "class-transformer": "^0.5.1",
