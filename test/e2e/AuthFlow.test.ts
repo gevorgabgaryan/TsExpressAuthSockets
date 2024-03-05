@@ -8,7 +8,6 @@ import Container from 'typedi';
 import MockMailService from '../utils/MaileServiceMock';
 import config from '../../src/config';
 
-
 Container.set(MailService, new MockMailService());
 
 let server: http.Server;
@@ -17,67 +16,56 @@ let newUserEmail = config.testUser;
 let newUserPassword = config.testPassword;
 
 beforeAll(async () => {
-    await TypeORM.init();
-    server = await API.init();
+  await TypeORM.init();
+  server = await API.init();
 });
 
 afterAll(async () => {
-    await TypeORM.close();
-    await API.close();
+  await TypeORM.close();
+  await API.close();
 });
 
 describe('Auth Workflow Tests', () => {
-
-    test('Register a new user', async () => {
-        const response = await request(server)
-            .post('/api/auth/register')
-            .send({
-              firstName: 'Test',
-              lastName: 'User',
-              email: newUserEmail,
-              password: newUserPassword
-          });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.email).toEqual(newUserEmail);
+  test('Register a new user', async () => {
+    const response = await request(server).post('/api/auth/register').send({
+      firstName: 'Test',
+      lastName: 'User',
+      email: newUserEmail,
+      password: newUserPassword,
     });
 
-    test('Confirm email of the new user', async () => {
-        const confirmationToken = await getUserConfirmationToken(newUserEmail);
-        const response = await request(server)
-            .post('/api/auth/confirm-email')
-            .send({
-                token: confirmationToken
-            });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.email).toEqual(newUserEmail);
+  });
 
-        expect(response.statusCode).toBe(204);
+  test('Confirm email of the new user', async () => {
+    const confirmationToken = await getUserConfirmationToken(newUserEmail);
+    const response = await request(server).post('/api/auth/confirm-email').send({
+      token: confirmationToken,
     });
 
-    test('Login with the new user', async () => {
-        const response = await request(server)
-            .post('/api/auth/login')
-            .send({
-                email: newUserEmail,
-                password: newUserPassword
-            });
+    expect(response.statusCode).toBe(204);
+  });
 
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toHaveProperty('token');
-        userToken = response.body.token;
+  test('Login with the new user', async () => {
+    const response = await request(server).post('/api/auth/login').send({
+      email: newUserEmail,
+      password: newUserPassword,
     });
 
-    test('Logout the user', async () => {
-        const response = await request(server)
-            .get('/api/auth/logout')
-            .set('Authorization', `Bearer ${userToken}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty('token');
+    userToken = response.body.token;
+  });
 
-        expect(response.statusCode).toBe(204);
-    });
+  test('Logout the user', async () => {
+    const response = await request(server).get('/api/auth/logout').set('Authorization', `Bearer ${userToken}`);
+
+    expect(response.statusCode).toBe(204);
+  });
 });
-
 
 const getUserConfirmationToken = async (emailAddress: string): Promise<string | null> => {
   const user = await UserRepository.findByEmail(emailAddress);
   return user?.verificationToken || null;
 };
-

@@ -18,7 +18,9 @@ import { RequestLogMiddleware } from './middlewares/RequestLogMiddleware';
 import { SecurityMiddleware } from './middlewares/SecurityMiddleware';
 import { RateLimitingMiddleware } from './middlewares/RateLimitingMiddleware';
 import fs from 'fs';
-import path from 'path'
+import path from 'path';
+import { ErrorHandlerMiddleware } from './middlewares/ErrorHandlerMiddleware';
+import { NotFoundMiddleware } from './middlewares/NotFoundMiddleware';
 
 export class API {
   static server: https.Server;
@@ -30,12 +32,13 @@ export class API {
     const app = createExpressServer({
       cors: true,
       controllers: [AuthController, UserController, GithubController],
-      middlewares: [RequestLogMiddleware, SecurityMiddleware, RateLimitingMiddleware],
+      middlewares: [RequestLogMiddleware, SecurityMiddleware, RateLimitingMiddleware, ErrorHandlerMiddleware, NotFoundMiddleware],
       routePrefix: '/api',
       validation: {
         whitelist: true,
         forbidNonWhitelisted: true,
       },
+      defaultErrorHandler: false,
       authorizationChecker: authorizationChecker,
       currentUserChecker: currentUserChecker,
     });
@@ -49,11 +52,10 @@ export class API {
     const options = {
       key: fs.readFileSync(path.join(__dirname, '..', '..', 'key.pem')),
       cert: fs.readFileSync(path.join(__dirname, '..', '..', 'cert.pem')),
-      passphrase: 'Gevorg'
+      passphrase: 'Gevorg',
     };
 
-
-    API.server = https.createServer(options ,app);
+    API.server = https.createServer(options, app);
 
     API.server.listen(config.port, () => {
       logger.info(`Server started at https://localhost:${config.port}`);
@@ -65,10 +67,10 @@ export class API {
   static async close() {
     if (API.server) {
       API.server.close(() => {
-        logger.info('Server closed.')
+        logger.info('Server closed.');
       });
     }
- }
+  }
 
   static initAutoMapper() {
     Mapper.withGlobalSettings({

@@ -22,7 +22,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/me')
-  @Authorized(['admin', 'user'])
+  @Authorized(['admin'])
   public async getMe(@CurrentUser() user: User): Promise<UserResponse> {
     const userWithPhotos = await this.userService.getUserWithPhotos(user.id);
     return Mapper.map(userWithPhotos, UserResponse);

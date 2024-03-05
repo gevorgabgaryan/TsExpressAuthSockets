@@ -14,13 +14,11 @@ export class TypeORM {
 
   static async close() {
     try {
-        await appDataSource.destroy();
-        logger.info("Db connection has been closed!");
+      await appDataSource.destroy();
+      logger.info('Db connection has been closed!');
     } catch (err) {
-        logger.error("Error during Db connection closing:", err);
-        throw err;
-      }
+      logger.error('Error during Db connection closing:', err);
+      throw err;
     }
+  }
 }
-
-

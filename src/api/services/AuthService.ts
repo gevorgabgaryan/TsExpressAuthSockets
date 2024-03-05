@@ -16,6 +16,7 @@ import { AuthProvider } from './models/AuthProvider';
 import { UserService } from './UserService';
 import { WebSocketService } from '../../websocket';
 import { BaseService } from './BaseService';
+import { UserExistsError } from '../errors/UserExistsError';
 
 interface JWTPayload {
   id: string;
@@ -64,7 +65,7 @@ export class AuthService extends BaseService {
       });
     } catch (error: any) {
       if (error.code === '23505') {
-        throw new Error('User exist');
+        throw new UserExistsError() ;
       }
       throw error;
     }

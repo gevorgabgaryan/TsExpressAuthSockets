@@ -3,7 +3,7 @@ import { UserRepository } from '../../../src/api/repositories/UserRepository';
 const mockUserRepository = {
   saveUser: jest.fn(),
   update: jest.fn(),
-  findByEmail: jest.fn()
+  findByEmail: jest.fn(),
 };
 
 const mockAuthProviderRepository = {};

@@ -1,6 +1,7 @@
 import { Action } from 'routing-controllers';
 import passport from 'passport';
 import { User } from '../services/models/User';
+import { AppAccessDeniedError } from '../errors/AppAccessDeniedError';
 
 const authorizationChecker = async (action: Action, roles: string[]): Promise<boolean> => {
   return new Promise((resolve, reject) => {
@@ -8,11 +9,9 @@ const authorizationChecker = async (action: Action, roles: string[]): Promise<bo
       if (err) {
         return reject(err);
       }
-      if (!user) {
-        return resolve(false);
-      }
+
       if (roles.length > 0 && !roles.includes(user.role)) {
-        return resolve(false);
+        throw new AppAccessDeniedError();
       }
       action.request.user = user;
       return resolve(true);

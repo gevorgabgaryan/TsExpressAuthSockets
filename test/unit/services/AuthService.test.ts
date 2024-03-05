@@ -26,9 +26,7 @@ describe('AuthService', () => {
       return runInTransaction(unitOfWork);
     });
 
-    userService = new UserService(
-      {} as PhotoService
-    );
+    userService = new UserService({} as PhotoService);
     mailService = new MailService();
 
     unitOfWork = UnitOfWorkMock();
@@ -45,7 +43,7 @@ describe('AuthService', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: config.testUser,
-        password: config.testPassword
+        password: config.testPassword,
       };
       const expectedUser = new User();
       const saveUserSpy = jest.spyOn(unitOfWork.userRepository, 'saveUser').mockResolvedValueOnce(expectedUser);
@@ -77,7 +75,7 @@ describe('AuthService', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: config.testUser,
-        password: config.testPassword
+        password: config.testPassword,
       };
 
       const dbError: Error & { code?: string } = new Error('User exists');
@@ -86,18 +84,16 @@ describe('AuthService', () => {
       jest.spyOn(unitOfWork.userRepository, 'saveUser').mockRejectedValueOnce(dbError);
       await expect(authService.register(userData)).rejects.toThrow('User exist');
     });
-
-
   });
 
   describe('AuthService login', () => {
-     it('should authenticate a user with valid credentials', async () => {
+    it('should authenticate a user with valid credentials', async () => {
       const loginData = { email: 'user@example.com', password: 'validPassword' } as LoginBody;
       const user = {
         id: '1',
         email: config.testUser,
         passwordHash: await argon2.hash('validPassword'),
-        status: 'active'
+        status: 'active',
       } as User;
 
       const findByEmailSpy = jest.spyOn(unitOfWork.userRepository, 'findByEmail').mockResolvedValue(user);
