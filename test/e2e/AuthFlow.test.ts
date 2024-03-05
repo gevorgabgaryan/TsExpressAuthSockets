@@ -6,14 +6,15 @@ import { UserRepository } from '../../src/api/repositories/UserRepository';
 import { MailService } from '../../src/api/services/MailService';
 import Container from 'typedi';
 import MockMailService from '../utils/MaileServiceMock';
+import config from '../../src/config';
 
 
 Container.set(MailService, new MockMailService());
 
 let server: http.Server;
 let userToken: string;
-let newUserEmail = 'newuser@example.com';
-let newUserPassword = 'Password123!';
+let newUserEmail = config.testUser;
+let newUserPassword = config.testPassword;
 
 beforeAll(async () => {
     await TypeORM.init();

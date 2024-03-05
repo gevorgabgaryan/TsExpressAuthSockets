@@ -5,6 +5,7 @@ import http from 'http';
 import Container from 'typedi';
 import { MailService } from '../../src/api/services/MailService';
 import MockMailService from '../utils/MaileServiceMock';
+import config from '../../src/config';
 
 
 let server: http.Server;
@@ -28,8 +29,8 @@ describe('User Registration Integration Tests', () => {
       .send({
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: 'password123',
+        email: config.testUser,
+        password: config.testPassword,
       });
 
     expect(response.statusCode).toBe(200);
@@ -42,8 +43,8 @@ describe('User Registration Integration Tests', () => {
       .send({
         firstName: 'Jane',
         lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: 'newpassword123',
+        email: config.testUser,
+        password: config.testPassword,
       });
 
     expect(response.statusCode).toBe(500);
@@ -56,8 +57,8 @@ describe('User Registration Integration Tests', () => {
       .send({
         firstName: 'Invalid',
         lastName: 'Email',
-        email: 'notanemail',
-        password: 'password123',
+        email: config.testUser.slice(0, 3),
+        password: config.testPassword,
       });
     expect(response.statusCode).toBe(400);
     expect(response.body).toHaveProperty('name', 'BadRequestError');

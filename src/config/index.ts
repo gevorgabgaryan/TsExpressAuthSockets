@@ -33,6 +33,8 @@ const config = {
     { suffix: '_normal', width: 300, height: 300 },
     { suffix: '_large', width: 500, height: 500 },
   ],
+  testUser: process.env.TEST_USER || '',
+  testPassword: process.env.TEST_PASWORD || '',
 };
 
 export default config;

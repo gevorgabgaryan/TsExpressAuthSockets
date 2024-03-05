@@ -11,6 +11,7 @@ import { AuthService } from '../../../src/api/services/AuthService';
 import { UnitOfWork } from '../../../src/api/repositories/UnitOfWork/UnitOfWork';
 import { LoginBody } from '../../../src/api/controllers/requests/auth/LoginBody';
 import { UnitOfWorkMock } from '../UnitOfWork/unitOfWorkMock';
+import config from '../../../src/config';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -43,8 +44,8 @@ describe('AuthService', () => {
       const userData = {
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: 'password123'
+        email: config.testUser,
+        password: config.testPassword
       };
       const expectedUser = new User();
       const saveUserSpy = jest.spyOn(unitOfWork.userRepository, 'saveUser').mockResolvedValueOnce(expectedUser);
@@ -62,8 +63,8 @@ describe('AuthService', () => {
       const userData = {
         firstName: 'John',
         lastName: 'Doe',
-        email: 'ex',
-        password: 'password123',
+        email: config.testPassword.slice(0, 3),
+        password: config.testPassword,
         files: [],
       };
 
@@ -75,8 +76,8 @@ describe('AuthService', () => {
       const userData = {
         firstName: 'John',
         lastName: 'Doe',
-        email: 'existing.email@example.com',
-        password: 'password123'
+        email: config.testUser,
+        password: config.testPassword
       };
 
       const dbError: Error & { code?: string } = new Error('User exists');
@@ -94,7 +95,7 @@ describe('AuthService', () => {
       const loginData = { email: 'user@example.com', password: 'validPassword' } as LoginBody;
       const user = {
         id: '1',
-        email: 'user@example.com',
+        email: config.testUser,
         passwordHash: await argon2.hash('validPassword'),
         status: 'active'
       } as User;
@@ -113,7 +114,7 @@ describe('AuthService', () => {
       const loginData = { email: 'user@example.com', password: 'invalidPassword' } as LoginBody;
       const user = {
         id: '1',
-        email: 'user@example.com',
+        email: config.testUser,
         passwordHash: await argon2.hash('validPassword'),
       } as User;
 

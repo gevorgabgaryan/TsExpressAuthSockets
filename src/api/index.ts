@@ -11,15 +11,17 @@ import currentUserChecker from './auth/currentUserChecker';
 import { UserController } from './controllers/UserController';
 import SetupPassport from '../lib/passport';
 import { GithubController } from './controllers/GithubController';
-import http from 'http';
+import https from 'https';
 import express from 'express';
 import logger from '../lib/logger';
 import { RequestLogMiddleware } from './middlewares/RequestLogMiddleware';
 import { SecurityMiddleware } from './middlewares/SecurityMiddleware';
 import { RateLimitingMiddleware } from './middlewares/RateLimitingMiddleware';
+import fs from 'fs';
+import path from 'path'
 
 export class API {
-  static server: http.Server;
+  static server: https.Server;
 
   static async init() {
     const passport = SetupPassport();
@@ -44,10 +46,17 @@ export class API {
 
     API.initAutoMapper();
 
-    API.server = http.createServer(app);
+    const options = {
+      key: fs.readFileSync(path.join(__dirname, '..', '..', 'key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, '..', '..', 'cert.pem')),
+      passphrase: 'Gevorg'
+    };
+
+
+    API.server = https.createServer(options ,app);
 
     API.server.listen(config.port, () => {
-      logger.info(`Server started at http://localhost:${config.port}`);
+      logger.info(`Server started at https://localhost:${config.port}`);
     });
 
     return API.server;
