@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "build": "tsc",
     "dev": "nodemon",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.{ts,json}\"",
@@ -14,6 +15,7 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js ",
     "typeorm:generate-migration": "npm run typeorm -- migration:generate src/db/migrations/$npm_config_name -d src/db/appDataSource.ts",
     "typeorm:run-migrations": "npm run typeorm -- migration:run -d src/db/appDataSource",
+    "typeorm:prod:run-migrations": "npm run typeorm -- migration:run -d dist/src/db/appDataSource.js",
     "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 jest --runInBand",
     "test:unit": "npm run test -- --testPathPattern=unit",
     "test:integration": "npm run test -- --testPathPattern=integration",
